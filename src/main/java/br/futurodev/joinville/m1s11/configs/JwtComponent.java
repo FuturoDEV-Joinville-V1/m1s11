@@ -1,5 +1,6 @@
 package br.futurodev.joinville.m1s11.configs;
 
+import br.futurodev.joinville.m1s11.entities.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,11 +21,14 @@ public class JwtComponent {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // -> 10 horas
+                .claim("id", user.getId())
+                .claim("name", user.getName())
+                .claim("role", user.getRole())
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

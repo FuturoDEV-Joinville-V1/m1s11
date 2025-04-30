@@ -41,10 +41,6 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority(
-                                UserRole.ADMIN.name(),
-                                UserRole.USER.name()
-                        )
                         .requestMatchers("/users/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/materials/**").hasAnyAuthority(
                                 UserRole.ADMIN.name(),
