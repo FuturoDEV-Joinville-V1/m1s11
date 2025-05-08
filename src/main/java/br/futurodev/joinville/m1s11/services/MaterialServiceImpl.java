@@ -6,6 +6,7 @@ import br.futurodev.joinville.m1s11.entities.Material;
 import br.futurodev.joinville.m1s11.mappers.MaterialMapper;
 import br.futurodev.joinville.m1s11.repositories.MaterialRepository;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,34 +15,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
 
+    private final MaterialMapper mapper = Mappers.getMapper(MaterialMapper.class);
+
     private final MaterialRepository repository;
 
     public List<MaterialResponseDto> findAll() {
         List<Material> materials = repository.findAll();
-        return MaterialMapper.toDtos(materials);
+        return materials.stream().map(mapper::toDto).toList();
     }
 
     @Override
     public MaterialResponseDto findById(Long id) {
-        return MaterialMapper.toDto(findEntityById(id));
+        return mapper.toDto(findEntityById(id));
     }
 
     @Override
     public MaterialResponseDto create(MaterialRequestDto dto ) {
         Material material = new Material();
-        MaterialMapper.toEntity(material, dto);
+        mapper.toEntity(dto, material);
 
         material = repository.save(material);
-        return MaterialMapper.toDto(material);
+        return mapper.toDto(material);
     }
 
     @Override
     public MaterialResponseDto update(Long id, MaterialRequestDto dto) {
         Material material = findEntityById(id);
-        MaterialMapper.toEntity(material, dto);
+        mapper.toEntity(dto, material);
 
         material = repository.save(material);
-        return MaterialMapper.toDto(material);
+        return mapper.toDto(material);
     }
 
     @Override
